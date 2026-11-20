@@ -19,6 +19,11 @@ import {
 } from "@/components/ui/card";
 import { GoogleButton, redirectByRole } from "../_components/auth-shared";
 
+function getSafeRedirect() {
+  const value = new URLSearchParams(window.location.search).get("redirect");
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : null;
+}
+
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -53,7 +58,9 @@ export default function SignInPage() {
       }
 
       toast.success("Welcome back to WedPlan!");
-      redirectByRole(router, session.data?.user.role);
+      const redirect = getSafeRedirect();
+      if (redirect) router.push(redirect);
+      else redirectByRole(router, session.data?.user.role);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong.");
     } finally {
@@ -64,9 +71,12 @@ export default function SignInPage() {
   async function handleGoogle() {
     setGoogleLoading(true);
     try {
+      const redirect = getSafeRedirect();
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: window.location.origin,
+        callbackURL: redirect
+          ? `${window.location.origin}${redirect}`
+          : window.location.origin,
       });
       if (result.error) {
         toast.error(result.error.message ?? "Could not continue with Google.");
