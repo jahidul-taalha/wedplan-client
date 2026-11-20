@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import type { MouseEvent } from "react";
 import { ArrowRight, MapPin, Sparkles, Store } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -40,9 +45,19 @@ export function vendorName(service: Service) {
 }
 
 export default function ServiceCard({ service }: { service: Service }) {
+  const router = useRouter();
+  const { data: session } = useSession();
   const id = service.id ?? service._id ?? "";
   const title = service.serviceName ?? service.name ?? "Wedding service";
   const image = typeof service.image === "string" ? service.image : "";
+  const detailHref = `/services/${id}`;
+
+  function handleView(event: MouseEvent<HTMLAnchorElement>) {
+    if (!session?.user) {
+      event.preventDefault();
+      router.push(`/sign-in?redirect=/services/${id}`);
+    }
+  }
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-rose-100 bg-white/90 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-100/60 dark:border-rose-900/40 dark:bg-card">
@@ -92,7 +107,7 @@ export default function ServiceCard({ service }: { service: Service }) {
 
         <div className="mt-auto pt-2">
           <Button
-            render={<Link href={`/services/${id}`} />}
+            render={<Link href={detailHref} onClick={handleView} />}
             variant="outline"
             className="h-9 w-full border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-900 dark:text-rose-300 dark:hover:bg-rose-950/40"
           >
