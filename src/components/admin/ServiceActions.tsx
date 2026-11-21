@@ -1,9 +1,10 @@
 "use client";
 
+import { useState, type MouseEvent } from "react";
 import { toast } from "sonner";
-import { Check, Trash2, X } from "lucide-react";
+import { Check, Loader2, Trash2, X } from "lucide-react";
 import ConfirmDialog from "./ConfirmDialog";
-import { getId, serviceStatus, type AdminService } from "./types";
+import { serviceStatus, type AdminService } from "./types";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -14,6 +15,9 @@ import {
 } from "@/components/ui/select";
 import { apiFetch } from "@/lib/api";
 
+const STATUSES = ["pending", "approved", "rejected"] as const;
+type Status = (typeof STATUSES)[number];
+
 export default function ServiceActions({
   service,
   onChanged,
@@ -21,45 +25,92 @@ export default function ServiceActions({
   service: AdminService;
   onChanged: () => void;
 }) {
-  const id = getId(service);
+  const [busy, setBusy] = useState<Status | "delete" | null>(null);
+  const id = String(service._id ?? service.id ?? "");
   const status = serviceStatus(service);
+  console.log("Admin service id:", service._id, "->", id);
 
-  async function changeStatus(next: string) {
+  async function changeStatus(next: Status) {
+    if (!id || id === "undefined") {
+      toast.error("Service id is missing.");
+      return;
+    }
+    if (busy) return;
+    console.log("Updating service status:", { id, status: next });
+    setBusy(next);
     try {
       const result = await apiFetch(`/api/services/admin/${id}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status: next }),
       });
-      toast.success(result?.message ?? `Service ${next}.`);
+      toast.success(result?.message ?? `Service ${next} successfully.`);
       onChanged();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update status.");
+      console.error("Failed to update service status:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update service status.",
+      );
+    } finally {
+      setBusy(null);
     }
   }
 
   async function remove() {
+    if (busy || !id) return;
+    setBusy("delete");
     try {
-      const result = await apiFetch(`/api/services/admin/${id}`, { method: "DELETE" });
+      const result = await apiFetch(`/api/services/admin/${id}`, {
+        method: "DELETE",
+      });
       toast.success(result?.message ?? "Service deleted.");
       onChanged();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete service.");
+      console.error("Failed to delete service:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete service.",
+      );
+    } finally {
+      setBusy(null);
     }
   }
 
+  function handleClick(event: MouseEvent<HTMLButtonElement>, next: Status) {
+    event.stopPropagation();
+    void changeStatus(next);
+  }
+
+  function handleStatusChange(value: string | null) {
+    if (!value || !STATUSES.includes(value as Status)) return;
+    void changeStatus(value as Status);
+  }
+
   return (
-    <div className="flex flex-wrap items-center justify-end gap-1">
+    <div className="relative z-10 flex flex-wrap items-center justify-end gap-1">
       {status !== "approved" && (
-        <Button variant="ghost" size="icon-sm" aria-label="Approve service" onClick={() => changeStatus("approved")}>
-          <Check />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Approve service"
+          disabled={busy !== null}
+          onClick={(event) => handleClick(event, "approved")}
+        >
+          {busy === "approved" ? <Loader2 className="animate-spin" /> : <Check />}
         </Button>
       )}
       {status !== "rejected" && (
-        <Button variant="ghost" size="icon-sm" aria-label="Reject service" onClick={() => changeStatus("rejected")}>
-          <X />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Reject service"
+          disabled={busy !== null}
+          onClick={(event) => handleClick(event, "rejected")}
+        >
+          {busy === "rejected" ? <Loader2 className="animate-spin" /> : <X />}
         </Button>
       )}
-      <Select value={status} onValueChange={(value) => value && changeStatus(value)}>
+      <Select value={status} onValueChange={handleStatusChange}>
         <SelectTrigger className="h-8 w-32" aria-label="Change status">
           <SelectValue />
         </SelectTrigger>
@@ -70,7 +121,16 @@ export default function ServiceActions({
         </SelectContent>
       </Select>
       <ConfirmDialog
-        trigger={<Button variant="ghost" size="icon-sm" aria-label="Delete service"><Trash2 /></Button>}
+        trigger={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Delete service"
+          >
+            <Trash2 />
+          </Button>
+        }
         title="Delete this service?"
         description="This listing will be permanently removed."
         confirmLabel="Delete"
