@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WedPlan
 
-## Getting Started
+WedPlan is a wedding planning marketplace client where couples discover and book wedding vendors, vendors manage their services and booking requests, and administrators moderate the platform. This repository contains the Next.js frontend; the backend lives in a separate repository linked below.
 
-First, run the development server:
+**Live website:** https://your-wedplan-domain.example.com
+
+## Features
+
+### Customer
+
+- Email/password and Google sign-in, with role-based redirects
+- Browse services with search, category and location filters, price sorting, and pagination
+- Service detail pages with image gallery, vendor information, and Premium vendor badge
+- Send booking requests with event date, location, and a message (authentication required)
+- Dashboard with booking statistics, request history with details, and cancellation of pending requests
+- Profile settings (name and profile image)
+- Stripe payment success/cancel pages that verify the checkout session and refresh the plan
+
+### Vendor
+
+- Vendor registration, dashboard statistics, and subscription plan display
+- Create services with multiple images uploaded through ImgBB
+- Manage listings: availability toggle, edit dialog, delete confirmation, and approval status
+- Review booking requests and accept or reject them with confirmation
+- Free/Premium plan comparison and Stripe checkout upgrade flow
+- Profile settings including business name
+
+### Admin
+
+- Platform statistics (users, vendors, customers, services, pending services, transactions)
+- Manage users: search, role filter, pagination, detail view, and block/unblock
+- Manage services: search, status and category filters, approve/reject, status change, and delete
+- Read-only transaction history
+
+## Technology Stack
+
+- Next.js 16 (App Router), React 19, TypeScript
+- Tailwind CSS 4 with a soft rose/gold theme
+- ShadCN-style UI components built on Base UI (dialog, sheet, dropdown menu, select, table, avatar, and others)
+- Better Auth (React client, JWT plugin, inferred user fields)
+- Framer Motion for section animations
+- Sonner for toast notifications
+- Lucide React icons
+- Stripe Checkout redirect flow (client hands off to the server-created session)
+- ImgBB image uploads
+- ESLint
+
+## Installation
+
+```bash
+git clone https://github.com/jahidul-taalha/wedplan-client.git
+cd wedplan-client
+npm install
+cp .env.local.example .env.local
+```
+
+Fill in the values in `.env.local`. The API must be running; see the server repository for its setup.
+
+## Running Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser. Useful checks:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Required Environment Variables
 
-## Learn More
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_IMGBB_API_KEY`
 
-To learn more about Next.js, take a look at the following resources:
+Only the variable names are listed here. Put values in `.env.local`, which is not committed.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Repositories
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Client: https://github.com/jahidul-taalha/wedplan-client
+- Server: https://github.com/jahidul-taalha/wedplan-server
