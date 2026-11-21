@@ -2,7 +2,15 @@
 
 WedPlan is a wedding planning marketplace client where couples discover and book wedding vendors, vendors manage their services and booking requests, and administrators moderate the platform. This repository contains the Next.js frontend; the backend lives in a separate repository linked below.
 
-**Live website:** https://your-wedplan-domain.example.com
+## Live Website
+https://wedplan-client-omega.vercel.app
+
+## Repositories
+- Client: https://github.com/jahidul-taalha/wedplan-client
+- Server: https://github.com/jahidul-taalha/wedplan-server
+
+## Live API (Server)
+https://wedplan-server-hofg.onrender.com
 
 ## Features
 
