@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import SiteChrome from "@/components/SiteChrome";
 import "./globals.css";
+export const dynamic = "force-dynamic";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-screen flex-col">
-        <Suspense fallback={<div className="min-h-screen" />}>
+        <Suspense fallback={null}>
           <SiteChrome>{children}</SiteChrome>
         </Suspense>
         <Toaster />
