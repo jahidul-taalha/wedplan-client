@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { MouseEvent } from "react";
-import { ArrowRight, MapPin, Sparkles, Store } from "lucide-react";
+import { ArrowRight, Crown, MapPin, Sparkles, Store } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,12 @@ export interface Service {
   vendor?:
     | string
     | null
-    | { name?: string; businessName?: string; vendorName?: string };
+    | {
+        name?: string;
+        businessName?: string;
+        vendorName?: string;
+        subscriptionPlan?: string;
+      };
   vendorName?: string;
 }
 
@@ -51,6 +56,9 @@ export default function ServiceCard({ service }: { service: Service }) {
   const title = service.serviceName ?? service.name ?? "Wedding service";
   const image = typeof service.image === "string" ? service.image : "";
   const detailHref = `/services/${id}`;
+  const isPremium =
+    typeof service.vendor === "object" &&
+    service.vendor?.subscriptionPlan?.toLowerCase() === "premium";
 
   function handleView(event: MouseEvent<HTMLAnchorElement>) {
     if (!session?.user) {
@@ -79,6 +87,12 @@ export default function ServiceCard({ service }: { service: Service }) {
         {service.category && (
           <Badge className="absolute top-3 left-3 bg-white/90 text-rose-700 hover:bg-white dark:bg-card/90 dark:text-rose-300">
             {service.category}
+          </Badge>
+        )}
+        {isPremium && (
+          <Badge className="absolute top-3 right-3 bg-amber-500 text-white">
+            <Crown />
+            Premium
           </Badge>
         )}
       </div>
