@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
@@ -27,7 +28,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-screen flex-col">
-        <SiteChrome>{children}</SiteChrome>
+        <Suspense fallback={<div className="min-h-screen" />}>
+          <SiteChrome>{children}</SiteChrome>
+        </Suspense>
         <Toaster />
       </body>
     </html>

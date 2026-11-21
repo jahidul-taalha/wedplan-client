@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { MouseEvent } from "react";
@@ -18,6 +17,7 @@ export interface Service {
   price?: number | string;
   location?: string;
   image?: string | null;
+  images?: string[];
   vendor?:
     | string
     | null
@@ -54,7 +54,8 @@ export default function ServiceCard({ service }: { service: Service }) {
   const { data: session } = useSession();
   const id = service.id ?? service._id ?? "";
   const title = service.serviceName ?? service.name ?? "Wedding service";
-  const image = typeof service.image === "string" ? service.image : "";
+  const image =
+    service.images?.[0] ?? (typeof service.image === "string" ? service.image : "");
   const detailHref = `/services/${id}`;
   const isPremium =
     typeof service.vendor === "object" &&
@@ -71,13 +72,11 @@ export default function ServiceCard({ service }: { service: Service }) {
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-rose-100 bg-white/90 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-100/60 dark:border-rose-900/40 dark:bg-card">
       <div className="relative h-48 overflow-hidden bg-linear-to-br from-rose-100 via-white to-amber-100 dark:from-rose-950/50 dark:via-card dark:to-amber-950/40">
         {image ? (
-          <Image
+          <img
             src={image}
             alt={title}
-            fill
-            unoptimized
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-rose-300 dark:text-rose-700">

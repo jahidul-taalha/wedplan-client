@@ -39,6 +39,7 @@ function SubscriptionContent() {
       if (!response?.url) throw new Error("No checkout URL was returned.");
       window.location.href = response.url;
     } catch (error) {
+      console.error("Failed to create checkout session:", error);
       toast.error(error instanceof Error ? error.message : "Could not start checkout.");
     } finally {
       setLoading(false);

@@ -28,7 +28,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-linear-to-b from-rose-50/70 to-amber-50/60 px-6 py-20 dark:from-rose-950/15 dark:to-amber-950/10">
+    <section id="how-it-works" className="bg-linear-to-b from-rose-50/70 to-amber-50/60 px-6 py-20 dark:from-rose-950/15 dark:to-amber-950/10">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
