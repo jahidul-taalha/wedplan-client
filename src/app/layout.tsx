@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,9 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-screen flex-col">
-        <Navbar />
-        <div className="flex flex-1 flex-col">{children}</div>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
         <Toaster />
       </body>
     </html>

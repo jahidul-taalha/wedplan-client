@@ -105,7 +105,7 @@ export default function Footer() {
       </div>
 
       <div className="mx-auto mt-12 max-w-7xl border-t border-rose-200/70 pt-6 text-center text-xs text-muted-foreground dark:border-rose-900/40">
-        © {new Date().getFullYear()} WedPlan. All rights reserved. Made with care
+        © 2026 WedPlan. All rights reserved. Made with care for your perfect day.
         for your perfect day.
       </div>
     </footer>
